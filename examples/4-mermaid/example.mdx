@@ -1,0 +1,34 @@
+# Mermaid Example
+
+This MDX file demonstrates Mermaid diagram support. Any fenced code block
+tagged `mermaid` is rendered as a diagram in the preview.
+
+To preview: open the command palette and run **MDX: Open Preview**, or click
+the magnifying glass in the editor title bar.
+
+## Flowchart
+
+```mermaid
+graph TD;
+  A[Start] --> B{Is it working?};
+  B -->|Yes| C[Great!];
+  B -->|No| D[Debug];
+  D --> B;
+```
+
+## Sequence Diagram
+
+```mermaid
+sequenceDiagram
+  participant User
+  participant Preview
+  User->>Preview: Write ```mermaid block
+  Preview->>User: Renders SVG diagram
+```
+
+## Regular code blocks are unaffected
+
+```js
+const greeting = 'hello world';
+console.log(greeting);
+```

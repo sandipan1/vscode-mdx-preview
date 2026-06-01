@@ -21,6 +21,24 @@ Preview will automatically update when you change the file you are previewing or
 
 [MDX Extension](https://github.com/silvenon/vscode-mdx) is recommended for syntax highlighting of MDX files.
 
+### Mermaid Diagrams
+
+Fenced code blocks tagged `mermaid` are rendered as diagrams in the preview,
+powered by [Mermaid](https://mermaid.js.org/). For example:
+
+````md
+```mermaid
+graph TD;
+  A[Start] --> B{Is it working?};
+  B -->|Yes| C[Great!];
+  B -->|No| D[Debug];
+```
+````
+
+The diagram theme follows the current VS Code theme (light / dark / high
+contrast). See `examples/4-mermaid` for a full example. Regular code blocks are
+unaffected.
+
 ### Custom Layout
 
 You can apply custom layout to the MDX file by

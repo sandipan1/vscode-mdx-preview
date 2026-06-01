@@ -10,6 +10,20 @@
 import React, { useEffect, ReactElement } from 'react';
 const { MDXProvider } = require('@mdx-js/tag');
 import styled, { ThemeProvider } from 'styled-components';
+import Mermaid from './Mermaid';
+
+const MERMAID_CLASSNAME = 'language-mermaid';
+
+// Normalize MDX `code` children (string | string[]) into a single string.
+const childrenToString = (children: any): string => {
+  if (typeof children === 'string') {
+    return children;
+  }
+  if (Array.isArray(children)) {
+    return children.map(childrenToString).join('');
+  }
+  return children == null ? '' : String(children);
+};
 
 const bodyStyles = `
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif;
@@ -23,6 +37,64 @@ const HR = styled.hr`
   border-bottom: 2px solid;
   border-color: ${props => props.theme.colorHeaderBorder};
 `;
+
+const StyledPre = styled.pre`
+  ${bodyStyles}
+  code {
+    color: ${props => props.theme.colorPreCode};
+  }
+  background-color: ${props => props.theme.colorPreBackground};
+
+  /* wordWrap */
+  white-space: pre-wrap;
+
+  padding: 16px;
+  border-radius: 3px;
+  overflow: auto;
+`;
+
+const StyledCode = styled.code`
+  ${bodyStyles}
+  font-family: Menlo, Monaco, Consolas, 'Droid Sans Mono', 'Courier New',
+    monospace, 'Droid Sans Fallback';
+  font-size: 14px;
+  line-height: 19px;
+`;
+
+// Override the MDX `code` element: ```mermaid blocks become rendered diagrams,
+// everything else falls back to the styled code element.
+const Code = (props: any) => {
+  if (props.className === MERMAID_CLASSNAME) {
+    return <Mermaid chart={childrenToString(props.children).replace(/\n$/, '')} />;
+  }
+  return <StyledCode {...props} />;
+};
+
+// Override the MDX `pre` element so a mermaid diagram isn't wrapped in the
+// grey code-block styling (it would put a box around the rendered SVG).
+//
+// The child here is an MDXTag element for the inner `code`, so the className
+// lives under `child.props.props.className` (MDXTag forwards fenced-code props
+// via a nested `props` object). We also check the flat `className` as a
+// fallback in case the child is rendered directly.
+const isMermaidChild = (child: any): boolean => {
+  if (!child || !child.props) {
+    return false;
+  }
+  const nested = child.props.props;
+  return (
+    (nested && nested.className === MERMAID_CLASSNAME) ||
+    child.props.className === MERMAID_CLASSNAME
+  );
+};
+
+const Pre = (props: any) => {
+  const child = React.Children.toArray(props.children)[0] as any;
+  if (isMermaidChild(child)) {
+    return <>{props.children}</>;
+  }
+  return <StyledPre {...props} />;
+};
 
 const components = {
   p: styled.p`
@@ -131,27 +203,8 @@ const components = {
     }
     line-height: 1.6;
   `,
-  pre: styled.pre`
-    ${bodyStyles}
-    code {
-      color: ${props => props.theme.colorPreCode};
-    }
-    background-color: ${props => props.theme.colorPreBackground};
-
-    /* wordWrap */
-    white-space: pre-wrap;
-
-    padding: 16px;
-    border-radius: 3px;
-    overflow: auto;
-  `,
-  code: styled.code`
-    ${bodyStyles}
-    font-family: Menlo, Monaco, Consolas, 'Droid Sans Mono', 'Courier New',
-      monospace, 'Droid Sans Fallback';
-    font-size: 14px;
-    line-height: 19px;
-  `,
+  pre: Pre,
+  code: Code,
   thematicBreak: HR,
   blockquote: styled.blockquote`
     ${bodyStyles}

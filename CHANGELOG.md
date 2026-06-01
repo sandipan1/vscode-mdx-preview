@@ -3,6 +3,10 @@ All notable changes to the "vscode-mdx-preview" extension will be documented in 
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [Unreleased]
+- Add Mermaid diagram support: ```mermaid fenced code blocks are rendered as
+  diagrams in the preview, with the theme following the current VS Code theme.
+
 ## [0.3.0] - 04/30/2020
 - Upgrade TypeScript to 3.8.3
 - Support SASS version `^1.26.3`
