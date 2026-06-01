@@ -22,8 +22,8 @@
     "typescript": "3.3.3333"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "NODE_OPTIONS=--openssl-legacy-provider react-scripts start",
+    "build": "NODE_OPTIONS=--openssl-legacy-provider react-scripts build",
     "postbuild": "rimraf ../../build/webview-app; mv build ../../build/webview-app",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
